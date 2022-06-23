@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+
+import random
+
+
+class Card:
+    def __init__(self, rank, suit):
+        self._rank = rank
+        self._suit = suit
+        self._value = self.get_value()
+
+    def get_value(self):
+        if self._rank == "Ace":
+            value = 11
+        elif self._rank == "Jack" or self._rank == "Queen" \
+                or self._rank == "King":
+            value = 10
+        else:
+            value = int(self._rank)
+        return value
+
+
+    def get_rank(self):
+        return self._rank
+
+
+    def get_suit(self):
+        return self._suit
+
+
+class Deck:
+    def __init__(self):
+        self.deck = []
+        self.dealt = []  # Prevents from dealing the same card
+        ranks = {"Ace", "2", "3", "4", "5", "6", "7", "8",
+                 "9",  "10", "Jack", "Queen", "King"}
+        suits = {"Clubs", "Diamonds", "Hearts", "Spades"}
+        for suit in suits:
+            for rank in ranks:
+                self.deck.append(Card(rank, suit))
+
+    def shuffle(self):
+        random.shuffle(self.deck)
+
+    def deal_card(self):
+        Card.card = self.deck.pop()
+        return Card.card
+
+    def deal(self):
+        # Randomly select card
+        remaining_cards = [card for card in self.deck if card not in self.dealt]
+        card_index = random.randrange(0, len(remaining_cards) - 1)
+        card = remaining_cards[card_index]
+        self.dealt.append(card)
+        return card
+
+class Hand:
+    def __init__(self):
+        self._cards = []
+
+    def add_card(self, card):
+        self._cards.append(card)
+
+    def get_card(self, index):
+        return self._cards[index]
+
+    def count(self):
+        return len(self._cards)
+
+    def points(self):
+        points = 0
+        ace_count = 0
+        for card in self._cards:
+            if card.get_rank() == "Ace":
+                ace_count += 1
+            points += card.get_value()
+
+# adjust points based on number of aces
+        if ace_count > 0 and points > 21:
+            points -= (ace_count * 10)
+        if ace_count > 1 and points <= 11:
+            points += 10
+        return points
+
+
+def main():
+    print("Card Dealer")
+    print()
+    print("I have shuffled a deck of 52 cards.")
+    print()
+    dealt= int(input("How many cards would you like?: "))
+    print()
+
+    # create and shuffle the deck
+
+    deck = Deck()
+    deck.shuffle()
+
+    # test hand
+    print("Here are your cards: ")
+    hand = Hand()
+    for i in range(dealt):
+        hand.add_card(deck.deal_card())
+
+    for i in range(hand.count()):
+        card = hand.get_card(i)
+
+        print(card.get_rank() + " of " + card.get_suit())
+
+
+    deck_apres = str(52 - dealt)
+    print()
+    print("There are " + deck_apres + " cards left in the deck.")
+    print()
+    print("Good Luck!")
+
+
+if __name__ == "__main__":
+    main()
